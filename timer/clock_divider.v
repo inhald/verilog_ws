@@ -8,30 +8,27 @@ module clock_divider (
   
 );
 
-  reg [15:0] countQ = 16'd49999;
   reg tq = 1'b0; 
+  parameter countQ = 20;
+  reg [15:0] count = 0;
 
   always @(posedge clk or negedge rst_n) begin
     
     if(!rst_n) begin
-      countQ <= 16'd49999;
-      clk_ms <= 1'b0;
-    end
-    
-    else if (countQ == 16'd0) begin
+      count <= 0;
       clk_ms <= 1'b1;
-      tq = 1'b1;
-      countQ <= 16'd49999;
+    end    
+    else if (count <= countQ/2) begin
+      clk_ms <= 1'b1;
+      count <= count + 1;
     end
-      
-    else if (tq == 1'b1) begin
+    else if (count <= countQ) begin
       clk_ms <= 1'b0;
-      tq <= 1'b0;
+      count <= count + 1;
     end
-    
     else begin
-      countQ <= countQ - 16'd1;
-    end 
+      count <= 0;
+    end
   
   
   end
